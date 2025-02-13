@@ -1,0 +1,43 @@
+app = "p2p-agents"
+primary_region = "lax"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  AGENT_NAME = "ducky"
+  P2P_PORT = "8000"
+  GRPC_PORT = "50051"  # Only used internally
+  P2P_NODE_PATH = "/app/sdk/p2p-node.js"
+  LOG_TO_CONSOLE = "true"
+  HTTP_PORT = "3000"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 8000
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 8000
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 3000
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 3000
+    handlers = ["http"]
+
+[metrics]
+  port = 9091
+  path = "/metrics"
+
+[processes]
+  app = "pnpm run start"  # Using the original agent command
+
+[vm]
+  memory = "2gb"
+  cpu_kind = "shared"
+  cpus = 1 
